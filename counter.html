@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">-->
+        <style>
+            #countdown {
+                /*font-family: "Roboto", sans-serif;*/
+                font-family: "Khand", sans-serif;
+                /*font-size: 4rem;*/
+                font-size: 194px;
+                font-weight: bold;
+                color: cornsilk;
+                margin: auto;
+                /*width: 300px;*/
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="countdown"></div>
+        <script src="dayjs\dayjs.min.js"></script>
+		<script src="dayjs\plugin\duration.js"></script>
+		<script src="dayjs\plugin\customParseFormat.js"></script>
+		<script>
+		  dayjs.extend(window.dayjs_plugin_duration);
+		  dayjs.extend(window.dayjs_plugin_customParseFormat);
+		</script>
+        <script>
+			
+			const interval = 1000;
+            const querystring = window.location.search;
+            const urlParam = new URLSearchParams(querystring);
+            const length = urlParam.get('length');
+			const startAt = urlParam.get('startAt');
+            const fontSize = urlParam.get('size');
+            const color = urlParam.get('color');
+            const fontFamily = urlParam.get('font');
+			const alignment = urlParam.get('align');
+			
+			let dur;
+			let s;
+			
+			if (startAt) {
+				s = dayjs(startAt, "hh:mm");
+				if (s.isBefore(dayjs())) {
+					s = s.add(1, 'day');
+				}
+				
+				dur = dayjs.duration(s.diff(dayjs()));
+			} else {
+				dur = dayjs.duration((length * 60 * 1000)+interval);
+			}
+
+            
+            document.getElementById("countdown").style.fontSize=fontSize;
+            document.getElementById("countdown").style.color=color;
+            document.getElementById("countdown").style.fontFamily=fontFamily;
+			document.getElementById("countdown").style.textAlign=alignment;
+            
+			setInterval(() => {
+				dur = dur.subtract(interval, 'ms');
+				if(dur.asMilliseconds() >= 0) {
+					let formatString = 'mm:ss';
+					if (dur.hours() > 0) {
+						formatString = 'HH:mm:ss';
+					}
+                    document.getElementById("countdown").innerHTML = dur.format(formatString);
+                } else {
+                    document.getElementById("countdown").innerHTML = "00:00";
+                }
+			}, interval);
+
+           // setInterval(() => {
+           //     let timeLeft = goLive.diff(moment());
+           //     if(timeLeft >= 0) {
+           //         document.getElementById("countdown").innerHTML = moment.utc(timeLeft).format("mm:ss");
+           //     } else {
+           //         document.getElementById("countdown").innerHTML = "00:00";
+           //     }
+           // }, 500);
+        </script>
+    </body>
+</html>
